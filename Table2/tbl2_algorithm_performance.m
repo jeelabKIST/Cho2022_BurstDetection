@@ -73,6 +73,12 @@ dt_cwt = 1/Fs;
 % [2] Measure Performance Metrics
 for n = completed_trials
     signal = double(signals(:,n)');
+    % (A) Apply IIR Notch Filter
+    w0 = 60/Nyq;
+    q_factor = 35;
+    bw = w0/q_factor;
+    [b,a] = iirnotch(w0,bw);
+    signal = filtfilt(b,a,signal);
     %% Get Time Interval & Lengths of Human Observed Bursts
     human_obv = HUMAN_ANNOT.(['trial' num2str(n)]);
     btime_true = cell(1,length(human_obv));
