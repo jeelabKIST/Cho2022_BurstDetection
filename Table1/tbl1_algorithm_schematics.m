@@ -32,7 +32,7 @@ thrA_factor = 1.2;
 [btime_ts, burst_ts] = detect_burst_timeseries(Fs, tvec, filt_signal, lf, hf, thrA_factor);
 thr_ts = mean(filt_signal) + thrA_factor*std(filt_signal);
 subthr_ts = mean(filt_signal) + (thrA_factor-1)*std(filt_signal);
-durthr_ts = 2*(Fs/((lf+hf)/2));
+durthr_ts = 3*(Fs/((lf+hf)/2));
 % [3] Plot Filtered Signal
 figure();
 plot(tvec,filt_signal,'Color',blue,'LineWidth',2);
@@ -46,17 +46,17 @@ text(3.92,-1.4,'200ms','FontSize',26,'FontName','Helvetica');
 text(4.03,-0.95,'0.5mV','FontSize',26,'FontName','Helvetica');
 % [4] Plot Detected Bursts
 figure(); hold on;
-set(gca,'DefaultLineLineWidth',2.0);
+set(gca,'DefaultLineLineWidth',3.0);
 set(gcf,'Units','Normalized','OuterPosition',[0.13,0.11,0.325,0.425],'Color','w');
 for i = 1:length(btime_ts)
     btime_mid = btime_ts{i}(round(length(btime_ts{i})/2));
     rectangle('Position',[btime_mid-(durthr_ts/(Fs*2)),min(filt_signal),durthr_ts/(Fs),abs(min(filt_signal))+max(filt_signal)],'EdgeColor',green,'FaceColor',green); % plot duration threshold
 end
 plot(tvec,filt_signal,'Color',blue);
-yln_ts = yline(thr_ts,'Color',orange,'LineWidth',3,'LineStyle','-.','alpha',1);
+yln_ts = yline(thr_ts,'Color',orange,'LineWidth',4,'LineStyle','-.','alpha',1);
 yln_ts.LabelVerticalAlignment = 'top';
 yln_ts.LabelHorizontalAlignment = 'right';
-yln_ts2 = yline(subthr_ts,'Color',orange,'LineWidth',3,'LineStyle','-','alpha',1);
+yln_ts2 = yline(subthr_ts,'Color',orange,'LineWidth',4,'LineStyle','-','alpha',1);
 yln_ts2.LabelVerticalAlignment = 'bottom';
 yln_ts2.LabelHorizontalAlignment = 'right';
 for i = 1:length(btime_ts)
@@ -100,7 +100,7 @@ env_signal = abs(hilbert(filt_signal));
 prcthrA = 70;
 [btime_env,burst_env,benvelope] = detect_burst_ampenv(Fs,tvec,filt_signal,lf,hf,prcthrA);
 thr_env = prctile(env_signal,prcthrA);
-durthr_env = 2*(Fs/((lf+hf)/2));
+durthr_env = 3*(Fs/((lf+hf)/2));
 % [2] Plot Filtered Signal and Envelope
 figure(); hold on;
 set(gcf,'Units','Normalized','OuterPosition',[0.13,0.11,0.325,0.425],'Color','white');
@@ -126,8 +126,8 @@ for i = 1:length(btime_env)
     benvelope{i}(end) = thr_env; % fill the gap on the end
     fill(btime_env{i},benvelope{i},red_rgb,'LineStyle','none','FaceAlpha',0.45);
 end
-plot(tvec,env_signal,'Color',purple,'LineWidth',3.0);
-yln_env = yline(thr_env,'Color',orange,'LineWidth',3,'LineStyle','--','alpha',1);
+plot(tvec,env_signal,'Color',purple,'LineWidth',4.0);
+yln_env = yline(thr_env,'Color',orange,'LineWidth',4,'LineStyle','--','alpha',1);
 yln_env.LabelVerticalAlignment = 'top';
 yln_env.LabelHorizontalAlignment = 'right';
 set(gca,'TickLength',[0 0],'XColor','none','YColor','none','Color','none');
