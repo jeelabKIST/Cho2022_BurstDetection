@@ -180,7 +180,7 @@ xticks(0:20:100);
 yticks(1:nMethod);
 yticklabels(fliplr(algorithms));
 ytickangle(90);
-xlabel('Temporal Concurrence');
+xlabel('Temporal Concurrence (%)');
 ylabel('Algorithms');
 title({'Single-Burst', 'Temporal Concurrence'});
 % (A) Figure Settings
