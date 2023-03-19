@@ -1,6 +1,6 @@
 %% Configure Library Paths
-util_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/utils');
-data_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/data');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
+data_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/data');
 addpath(util_path);
 addpath(data_path);
 %% Load Data
@@ -12,8 +12,8 @@ hp = helper;
 T_set = {T_bp,T_ev,T_stp,T_mtp,T_cwt};
 % [2] Set Parameters
 Fs = 512; % sampling rate
-f1 = 25;  % frequency of interest
-listCycle = (((3:12).*(Fs/f1))./Fs)*1000; % convert length of cycles to milliseconds
+f = 25;  % frequency of interest (central frequency of a frequency band)
+listCycle = (((3:12).*(Fs/f))./Fs)*1000; % convert length of cycles to milliseconds
 listNoise = -10:2:10;
 nMethod = length(T_set);
 %% Create Custom Colormaps
@@ -32,16 +32,16 @@ blue2red = [blue2white;white2red];
 %% Schematics of Temporal Concurrence
 % [1] Set Relevant Parameters
 r = 0.25; % cosine fraction
-f1 = 25; % frequency of interest
+f = 25; % frequency of interest
 Fs = 512; % sampling rate
 dt = 1/Fs; % sampling period
 t = 1:dt:3; % time vector
 x = zeros(1,length(t));
 location = 1.5;
-duration = round(8*(Fs/f1));
+duration = round(8*(Fs/f));
 % [2] Build Tukey Bursts
 tstart = find(t == location);
-burst = sin(2*pi*f1*t(tstart:tstart+duration));
+burst = sin(2*pi*f*t(tstart:tstart+duration));
 tukey_burst = burst.*tukeywin(length(burst),r)';
 x(tstart:tstart+duration) = tukey_burst;
 % [3] Build Square Pulses
@@ -50,8 +50,8 @@ idx = 1:length(t);
 idx = idx(x~=0);
 tstart = idx(1);
 tend = idx(end);
-move = round(3*(Fs/f1));
-shft = round(1.5*(Fs/f1));
+move = round(3*(Fs/f));
+shft = round(1.5*(Fs/f));
 sp(1,tstart:tend) = 1.2;
 sp(2,tstart+shft:tend-shft) = 1.2;
 sp(3,tstart+move:tend+move) = 1.2;
@@ -113,8 +113,8 @@ round_opt = 'integer';
 vmin_diff = 0;
 vmax_diff = 100;
 annot_fmt = '%.0f';
-fig_pos = [380,1,1230,976];
-ax_pos = struct('pos_type','Position','pos_coord',[0.2545,0.1576,0.5085,0.7113]);
+fig_pos = [1571,30,1230,976];
+ax_pos = struct('pos_type','Position','pos_coord',[0.2545,0.1576,0.5665,0.7113]);
 axis_params1 = struct('fnt_sz',52,'txt_sz',45,'fig_pos',fig_pos,'ax_pos',ax_pos,...
     'annot_fmt','%.0f','cbar_opt','off','xlbl_opt','on','ylbl_opt','on');
 ax_pos = struct('pos_type','Position','pos_coord',[0.29,0.3486,0.4277,0.5428]);
@@ -275,7 +275,8 @@ function plot_noise_bar(concurrence,concurrence_avg,concurrence_std,durIdx,snrId
     set([p{:}],'LineWidth',3);
     set(er,'Color','k','LineStyle','none','LineWidth',3);
     set(lg,'Visible','off');
-    set(gca,'Box','off','TickDir','out','TickLength',[0.03,0.03],'LineWidth',3,'FontSize',28,'FontWeight','bold', ... 
+    set(gca,'Box','off','TickDir','out','TickLength',[0.03,0.03],'LineWidth',3,'FontSize',28,...
+        'FontWeight','bold', 'XTickLabelRotation',0,...
         'Position',[0.333857627118644,0.369306429156933,0.336198870056497,0.46174667943211]);
     set(gcf,'Color','w','OuterPosition',fig_pos);
     if ~lbl_opt
@@ -322,7 +323,8 @@ function plot_duration_bar(concurrence,concurrence_avg,concurrence_std,durIdx,sn
     set([p{:}],'LineWidth',3);
     set(er,'Color','k','LineStyle','none','LineWidth',3);
     set(lg,'Visible','off');
-    set(gca,'Box','off','TickDir','out','TickLength',[0.03,0.03],'LineWidth',3,'FontSize',28,'FontWeight','bold', ... 
+    set(gca,'Box','off','TickDir','out','TickLength',[0.03,0.03],'LineWidth',3,'FontSize',28,...
+        'FontWeight','bold','XTickLabelRotation',0,... 
         'Position',[0.333857627118644,0.369306429156933,0.336198870056497,0.46174667943211]);
     set(gcf,'Color','w','OuterPosition',fig_pos);
     if ~lbl_opt
