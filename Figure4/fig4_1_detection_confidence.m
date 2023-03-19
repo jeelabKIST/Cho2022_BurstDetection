@@ -1,12 +1,12 @@
 %% Configure Library Path
-util_path = genpath('/Users/jeelab/Desktop/BURST_ver2.2/utils');
-data_path = genpath('/Users/jeelab/Desktop/BURST_ver2.2/data');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
+data_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/data');
 addpath(util_path);
 addpath(data_path);
 %% Load Data
 HEATMAP = load('HM_beta.mat').HEATMAP;
-Fs = 512; f1 = 25;
-listCycle = (((3:12).*(Fs/f1))./Fs)*1000; % convert length of cycles to milliseconds
+Fs = 512; f = 25;
+listCycle = (((3:12).*(Fs/f))./Fs)*1000; % convert length of cycles to milliseconds
 listNoise = -10:2:10;
 nMethod = 5;
 %% Compute Detection Confidence
@@ -26,7 +26,7 @@ red2white = interp1(1:2,[159,59,50;255,255,255]/255,linspace(1,2,r2w_len),'linea
 white2blue = interp1(1:2,[255,255,255;30,106,156]/255,linspace(1,2,w2b_len),'linear');
 red2blue = [red2white;white2blue];
 %% Plot Detection Confidence Heatmaps For Each Algorithm
-fig_pos = [352,1,1230,976];
+fig_pos = [1571,30,1230,976];
 ax_pos = struct('pos_type','Position','pos_coord',[0.1967,0.1771,0.5769,0.7245]);
 titles = {'Bandpass Filtering', 'Envelope-Based', 'Single-Tapered', 'Multitaper', 'Wavelet'};
 cbar_opts = {'off','off','on','off','on'};

@@ -1,12 +1,12 @@
 %% Configure Library Path
-util_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/utils');
-data_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/data');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
+data_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/data');
 addpath(util_path);
 addpath(data_path);
 %% Load Data
 HEATMAP = load('HM_beta.mat').HEATMAP;
-Fs = 512; f1 = 25;
-listCycle = (((3:12).*(Fs/f1))./Fs)*1000; % convert length of cycles to milliseconds
+Fs = 512; f = 25;
+listCycle = (((3:12).*(Fs/f))./Fs)*1000; % convert length of cycles to milliseconds
 listNoise = -10:2:10;
 nMethod = 5;
 %% Compute Detection Confidence
@@ -41,7 +41,7 @@ blue2red = [blue2white;white2red];
 f1_min = 0; f1_max = 1;
 [tc_min,tc_max] = find_metric_minmax(HEATMAP.concurrence);
 cmap = parula; cmap = cmap(1:235,:);
-fig_pos = [352,1,1230,976];
+fig_pos = [1571,30,1230,976];
 ax_pos = [0.2138,0.1537,0.5455,0.6926];
 % [2] Plot Schematics
 figure();
@@ -68,6 +68,7 @@ ylabel('Temporal Concurrence');
 title({'Schematics of';'Detection Confidence Scores'});
 % (A) Axis Settings
 ax = gca;
+ax.XTickLabelRotation = 0;
 ax.XRuler.Axle.LineStyle = 'none';
 ax.YRuler.Axle.LineStyle = 'none';
 ax.XAxis.MajorTickChild.LineWidth = 4;
@@ -88,7 +89,7 @@ plot_manual_colorbar(x_axis,y_axis,dc_cutoff,cmap,dc_min,dc_max,lbl_name);
 vmin = 1; vmax = 7; 
 convert_opt = false;
 round_opt = 'decimal';
-fig_pos = [352,1,1230,976];
+fig_pos = [1571,30,1230,976];
 ax_pos = struct('pos_type','Position','pos_coord',[0.2138,0.1537,0.5455,0.6926]);
 axis_params = struct('fnt_sz',52,'txt_sz',42,'fig_pos',fig_pos,'ax_pos',ax_pos,...
     'annot_fmt','%.0f','cbar_opt','off','xlbl_opt','on','ylbl_opt','on');
@@ -141,7 +142,7 @@ makeLegendToImage(leg_fig,lgnd,'line');
 [decMat,clrMat,list_uqid,list_algo] = extract_decision_matrix(matD_best,dc);
 % [2] Set Visualization Parameters
 okabe_ito_expand = cat(1,okabe_ito,[182,188,191]./255,[0,0,0]);
-fig_pos = [352,1,1230,976];
+fig_pos = [1571,30,1230,976];
 ax_pos = [0.2138,0.1537,0.5455,0.6926];
 % [3] Visualize Decision Matrix
 figure();
@@ -151,7 +152,7 @@ yticks(listNoise);
 xvar_lbl = categorical(cellfun(@(x) mod(x,listCycle(1)) == 0, num2cell(listCycle)) .* listCycle);
 xvar_lbl(xvar_lbl == categorical(0)) = ' ';
 xticklabels(xvar_lbl);
-colormap(okabe_ito_expand); caxis([1,7]);
+colormap(okabe_ito_expand); clim([1,7]);
 axis xy;
 x = repmat(listCycle,length(listNoise),1);
 y = repmat(listNoise,length(listCycle),1)';
@@ -171,6 +172,7 @@ xlabel('Duration (ms)');
 ylabel('SNR (dB)');
 title({'Detection Confidence'; 'Decision Matrix'});
 ax = gca;
+ax.XTickLabelRotation = 0;
 ax.XRuler.Axle.LineStyle = 'none';
 ax.YRuler.Axle.LineStyle = 'none';
 ax.XAxis.MajorTickChild.LineWidth = 4;
@@ -207,7 +209,7 @@ function plot_manual_colorbar(xvar,yvar,dc_cutoff,custom_cmap,vmin,vmax,lbl_name
     vmin = round(vmin,2);
     vmax = round(vmax,2);
     imagesc(xvar,yvar,ones(length(xvar),length(yvar))*dc_cutoff);
-    colormap(custom_cmap); cb = colorbar('southoutside'); caxis([vmin,vmax]);
+    colormap(custom_cmap); cb = colorbar('southoutside'); clim([vmin,vmax]);
     pause(0.5);
     
     ax = gca;
@@ -215,7 +217,7 @@ function plot_manual_colorbar(xvar,yvar,dc_cutoff,custom_cmap,vmin,vmax,lbl_name
     ax.YRuler.Axle.LineStyle = 'none';
     set(ax,'Color','none','Position',[0.2138,0.2537,0.5455,0.6926],'Visible','off');
     set(cb,'Visible','on','XColor','none','YColor','none');
-    fig_pos = [352,1,1230,976];
+    fig_pos = [1571,30,1230,976];
     set(gcf,'Color','w','Position',fig_pos);
     
     dm_pos = cb.Position + [-0.0014 0 0 0];
