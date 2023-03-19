@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # NOTE: The times in signal and video were synchronized based on their respective recording 'start' times.
 
     # [2] Set System Parameters
-    file_path = os.path.join('/Users/jeelab/Desktop/Cho2022_BurstDetection'
+    file_path = os.path.join('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection'
                             '/data/experimental_data/ESCAPE/sample_videos', 'escape_811.mp4')
     save_path = os.getcwd()
     if not os.path.exists(file_path):
