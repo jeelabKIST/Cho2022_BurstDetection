@@ -33,6 +33,11 @@ for n = 1:length(DC)
     listCycle = round(((3:12).*Fs/cnt_f(n)./Fs)*1000); % convert length of cycles to milliseconds
     [matD_best,~,~,~] = get_best_and_poor_heatmaps(listNoise,listCycle,DC{n},convert_opt,round_opt);
     [decMat,clrMat,list_uqid,list_algo] = extract_decision_matrix(matD_best,DC{n});
+    if sum(list_uqid > nMethod) ~= 0
+        for id_idx = find((cellfun(@(x) length(x), list_algo) > 1) == 1)
+            fprintf(['Multi-algorithm ID - ' num2str(list_uqid(id_idx)) ': ' sprintf('%s ', string(list_algo{id_idx})) '\n']);
+        end
+    end
     % (B) Construct Figure
     figure();
     imagesc(listCycle,listNoise,clrMat);
