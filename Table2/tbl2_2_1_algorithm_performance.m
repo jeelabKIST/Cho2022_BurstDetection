@@ -1,12 +1,14 @@
 %% Configure Library Paths
-util_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/utils');
-data_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/data');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
+data_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/data');
 addpath(util_path);
 addpath(data_path);
 %% Load Data
 % [1] Get Theoretical Results
-HEATMAP = load('HM_gamma.mat').HEATMAP;
-DC = load('DC_gamma.mat');
+band_name = 'gamma';
+% NOTE: For Table 2, set `band_name` as 'gamma'. For Table 2-1, use 'beta'.
+HEATMAP = load(['HM_' band_name '.mat']).HEATMAP;
+DC = load(['DC_' band_name '.mat']);
 scoreMat = {
     struct2cell(HEATMAP.precision)';
     struct2cell(HEATMAP.recall)';
@@ -27,23 +29,19 @@ tvec = times;          % time vector
 nTrial = size(data,3); % number of trials
 signals = squeeze(data(anatomy_idx,:,:));
 % [3] Get Human Annotations
-data_annot = readmatrix('annotations.xlsx','Sheet',1);
-HUMAN_ANNOT = struct();
-for n = 1:nTrial
-    if ismember(n,data_annot(:,1)) % if there exists human annotations for a trial
-        data_name = ['trial' num2str(n)];
-        data_idx = data_annot(:,1) == n;
-        HUMAN_ANNOT.(data_name) = data_annot(data_idx,5:end);
-    else
-        continue;
-    end
-end
-completed_trials = cellfun(@(name) str2double(name), regexp(fieldnames(HUMAN_ANNOT),'\d*','Match')');
+sheet_name = [upper(band_name(1)) band_name(2:end)];
+HUMAN_ANNOT = read_annotation_file(sheet_name,nTrial,tvec,util_path,data_path);
+completed_trials = cellfun(@(name) str2double(name), regexp(fieldnames(HUMAN_ANNOT),'\d*','Match')'); % trials with human annotations
 nComplete = length(completed_trials);
 %% Set Hyperparameters For Each Algorithm
 % [1] Time Domain
-lo_f = 35;     % lower frequency bound
-hi_f = 45;     % upper frequency bound
+if strcmp(band_name, 'gamma')
+    lo_f = 35; % lower frequency bound
+    hi_f = 45; % upper frequency bound
+elseif strcmp(band_name, 'beta')
+    lo_f = 20;
+    hi_f = 30;
+end
 mid_f =  (lo_f + hi_f) / 2;
 % [2] Time-Frequency Domain
 freq_range = unique([15:5:30 30:10:60]); % frequencies of interest
@@ -147,18 +145,24 @@ for m = 1:nMethod
     end
 end
 %% Performance Statistics: Burst Detections against Human Annotations
-% [1] Algorithmic Moments across Metrics
-avgs = string([mean(PRECISION); mean(RECALL); mean(F1_SCORE); mean(TC); mean(DC)]);
-stds = string([std(PRECISION); std(RECALL); std(F1_SCORE); std(TC); std(DC)]);
+% [1] Define Relevant Lambda Functions
+lmean = @(x) mean(x,'omitnan');
+lstd = @(x) std(x,'omitnan');
+lsum = @(x) sum(x,1,'omitnan');
+lvar = @(x) var(x,'omitnan');
+% Note: NaN values can occur when no bursts are detected by an algorithm.
+% [2] Algorithmic Moments across Metrics
+avgs = string([lmean(PRECISION); lmean(RECALL); lmean(F1_SCORE); lmean(TC); lmean(DC)]);
+stds = string([lstd(PRECISION); lstd(RECALL); lstd(F1_SCORE); lstd(TC); lstd(DC)]);
 symbols = repmat("+",[nMetric, nMethod]);
 moments = strcat(avgs,symbols,stds);
 mnt_tbl = create_table(moments,metric_names,method_names);
-% [2] Manhattan Distances across Metrics
-distances = [sum(abs(1-PRECISION),1); sum(abs(1-RECALL),1); sum(abs(1-F1_SCORE),1); sum(abs(1-TC),1); sum(abs(1-DC),1)];
+% [3] Manhattan Distances across Metrics
+distances = [lsum(abs(1-PRECISION)); lsum(abs(1-RECALL)); lsum(abs(1-F1_SCORE)); lsum(abs(1-TC)); lsum(abs(1-DC))];
 dist_tbl = create_table(distances,metric_names,method_names);
 sod = sum(distances,1); % sum of distances
-% [3] Algorithmic Variances across Metrics
-variances = [var(PRECISION); var(RECALL); var(F1_SCORE); var(TC); var(DC)];
+% [4] Algorithmic Variances across Metrics
+variances = [lvar(PRECISION); lvar(RECALL); lvar(F1_SCORE); lvar(TC); lvar(DC)];
 var_tbl = create_table(variances,metric_names,method_names);
 sov = sum(variances,1); % sum of variances
 %% (Optional) Additional Statistical Tests
@@ -187,7 +191,7 @@ okabe_ito = [[0,114,178];
              [0,158,115];
              [204,121,167];
              [240,228,66]]./255;
-% [2] Visualize Performance Grphs
+% [2] Visualize Performance Graphs
 plot_bar_graph(PRECISION,okabe_ito,'Precision');
 plot_bar_graph(RECALL,okabe_ito,'Recall');
 plot_bar_graph(F1_SCORE,okabe_ito,'F1-Score');
@@ -279,10 +283,12 @@ function plot_bar_graph(data_table,color_palette,metric_name,size_opt)
     set([er{:}],'CapSize',25,'LineStyle','none','LineWidth',10);
     if strcmp(size_opt,'small')
         axis square;
-        set(gca,'Box','off','LineWidth',6,'TickDir','out','TickLength',[0.015, 0.025],'FontSize',48,'FontWeight','bold','Position',[0.1344,0.1455,0.8391,0.8115]);
+        set(gca,'Box','off','LineWidth',6,'TickDir','out','TickLength',[0.015, 0.025],'XTickLabelRotation',0, ... 
+            'FontSize',48,'FontWeight','bold','Position',[0.1344,0.1455,0.8391,0.8115]);
         set(gcf,'Color','w','Position',[344,397,707,580]);
     else
-        set(gca,'Box','off','LineWidth',6,'TickDir','out','TickLength',[0.015, 0.025],'FontSize',45,'FontWeight','bold','Position',[0.1755,0.1568,0.7206,0.7746]);
+        set(gca,'Box','off','LineWidth',6,'TickDir','out','TickLength',[0.015, 0.025],'XTickLabelRotation',0, ... 
+            'FontSize',45,'FontWeight','bold','Position',[0.1755,0.1568,0.7206,0.7746]);
         set(gcf,'Color','w','Position',[344,1,1097,976]);
     end
 end
