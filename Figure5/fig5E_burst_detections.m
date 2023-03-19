@@ -1,6 +1,6 @@
 %% Configure Library Paths
-util_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/utils');
-data_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/data/experimental_data/ESCAPE');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
+data_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/data/experimental_data/ESCAPE');
 addpath(util_path);
 addpath(data_path);
 %% Load Data
@@ -15,17 +15,8 @@ tvec = times;    % time vector
 nTrial = size(data,3);
 signals = squeeze(data(anatomy_idx,:,:));
 %% Read Annotations
-data_annot = readmatrix('annot/annotations.xlsx','Sheet',1);
-HUMAN_ANNOT = struct();
-for n = 1:nTrial
-    if ismember(n,data_annot(:,1)) % if there exists human annotations for a trial
-        data_name = ['trial' num2str(n)];
-        data_idx = data_annot(:,1) == n;
-        HUMAN_ANNOT.(data_name) = data_annot(data_idx,5:end);
-    else
-        continue;
-    end
-end
+sheet_name = 'Gamma';
+HUMAN_ANNOT = read_annotation_file(sheet_name,nTrial,tvec,util_path,data_path);
 %% Set Hyperparameters For Each Algorithm
 % [1] Time Domain
 f = 40;     % frequency of interest
@@ -166,8 +157,7 @@ ylim([-0.07,0.07]);
 set(gca,'Color','none','Box','off','TickDir','out','XColor','none','YColor','none');
 set(gcf,'Color','w','Position',[430,555,947,356]);
 %% Appendix: Accessory Functions
-% Function #1
-% Parse Bursts by Time
+% Function #1: Parse Bursts by Time
 function [btime] = parse_data(btime)
     idx = cellfun(@(b) b(1) >= 60 && b(end) <=120, btime);
     btime = btime(idx);
