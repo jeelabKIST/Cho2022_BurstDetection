@@ -1,12 +1,12 @@
 %% Configure Library Path
-util_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/utils');
-data_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/data');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
+data_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/data');
 addpath(util_path);
 addpath(data_path);
 %% Load Data
 HEATMAP = load('HM_beta.mat').HEATMAP;
-Fs = 512; f1 = 25;
-listCycle = (((3:12).*(Fs/f1))./Fs)*1000; % convert length of cycles to milliseconds
+Fs = 512; f = 25;
+listCycle = (((3:12).*(Fs/f))./Fs)*1000; % convert length of cycles to milliseconds
 listNoise = -10:2:10;
 %% Set Visualization Parameters
 % [1] Create Custom Colormaps
@@ -26,7 +26,7 @@ blue2red = [blue2white;white2red];
 vmin = 1;
 vmin_diff = 0;
 vmax_diff = 100;
-fig_pos = [1596,-179,1286,1001];
+fig_pos = [1571,30,1286,1001];
 ax_pos = struct('pos_type','InnerPosition','pos_coord',[0.2054,0.1201,0.6284,0.7619]);
 axis_params1 = struct('fnt_sz',42,'txt_sz',36,'fig_pos',fig_pos,'ax_pos',ax_pos,...
     'annot_fmt','%.0f','cbar_opt','off','xlbl_opt','off','ylbl_opt','on');
