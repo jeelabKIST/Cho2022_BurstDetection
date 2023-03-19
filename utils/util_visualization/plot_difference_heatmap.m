@@ -1,4 +1,4 @@
-function plot_difference_heatmap(xvar,yvar,matV_best,matV_poor,custom_cmap,vmin,vmax,axis_params)
+function plot_difference_heatmap(xvar, yvar, matV_best, matV_poor, custom_cmap, vmin, vmax, axis_params)
     %% Function 'plot_difference_heatmap'
     % DESCRIPTION
     % This function plots difference between heatmaps of best and worst
@@ -16,7 +16,7 @@ function plot_difference_heatmap(xvar,yvar,matV_best,matV_poor,custom_cmap,vmin,
     % 8. axis_params   [struct]           : axis parameters for visualization
     
     % Written by SungJun Cho, October 11, 2021
-    % Last modified on October 29, 2021
+    % Last modified on January 29, 2023
     %% Set Axis Parameters
     fnt_sz = axis_params.fnt_sz;
     txt_sz = axis_params.txt_sz;
@@ -65,6 +65,7 @@ function plot_difference_heatmap(xvar,yvar,matV_best,matV_poor,custom_cmap,vmin,
     pause(0.5);
     xlabel('Duration (ms)');
     ax = gca;
+    ax.XTickLabelRotation = 0;
     ax.XRuler.Axle.LineStyle = 'none';
     ax.YRuler.Axle.LineStyle = 'none';
     set(ax,'TickDir','out','Box','off','FontSize',fnt_sz,'FontWeight','bold','LineWidth',2,'Color','none',ax_pos.pos_type,ax_pos.pos_coord);
@@ -79,12 +80,14 @@ function plot_difference_heatmap(xvar,yvar,matV_best,matV_poor,custom_cmap,vmin,
         if strcmp(cbar_loc, 'southoutside')
             dm_ax.YTick = [];
             dm_ax.XTick = vmin:vint:vmax;
+            dm_ax.XTickLabelRotation = 0;
             dm_ax.XLim = [vmin vmax];
             dm_ax.YColor = 'w';
             xlabel(dm_ax,cbar_lbl,'FontSize',fnt_sz,'FontWeight','bold');
         else
             dm_ax.XTick = [];
             dm_ax.YTick = vmin:vint:vmax;
+            dm_ax.YTickLabelRotation = 0;
             dm_ax.YLim = [vmin vmax];
             dm_ax.XColor = 'w';
             ylabel(dm_ax,cbar_lbl,'FontSize',fnt_sz,'FontWeight','bold');

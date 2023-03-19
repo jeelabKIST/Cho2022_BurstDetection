@@ -1,4 +1,4 @@
-function plot_optimal_heatmap(xvar,yvar,matC,matV,custom_cmap,vmin,vmax,axis_params)
+function plot_optimal_heatmap(xvar, yvar, matC, matV, custom_cmap, vmin, vmax, axis_params)
     %% Function 'plot_optimal_heatmap'
     % DESCRIPTION
     % This function plots heatmaps of the best and worst performing algorithms.
@@ -15,7 +15,7 @@ function plot_optimal_heatmap(xvar,yvar,matC,matV,custom_cmap,vmin,vmax,axis_par
     % 8. axis_params   [struct]           : axis parameters for visualization
     
     % Written by SungJun Cho, October 11, 2021
-    % Last modified on October 29, 2021
+    % Last modified on January 29, 2023
     %% Set Axis Parameters
     fnt_sz = axis_params.fnt_sz;
     txt_sz = axis_params.txt_sz;
@@ -59,6 +59,7 @@ function plot_optimal_heatmap(xvar,yvar,matC,matV,custom_cmap,vmin,vmax,axis_par
     xlabel('Duration (ms)');
     ylabel(cb,'Algorithms');
     ax = gca;
+    ax.XTickLabelRotation = 0;
     ax.XRuler.Axle.LineStyle = 'none';
     ax.YRuler.Axle.LineStyle = 'none';
     set(ax,'TickDir','out','Box','off','FontSize',fnt_sz,'FontWeight','bold','LineWidth',2,'Color','none',ax_pos.pos_type,ax_pos.pos_coord);

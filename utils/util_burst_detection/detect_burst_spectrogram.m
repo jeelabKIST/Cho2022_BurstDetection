@@ -1,7 +1,7 @@
 function [stime, sburst, binSpec] = detect_burst_spectrogram(Spec_f, Spec_t, Spec, dt, thrA_factor, verbose)
     %% Function: 'detect_burst_spectrogram'
     % DESCRIPTION
-    % Detects bursts in the frequency domain by imposing an amplitude and a duration
+    % Detects bursts in the frequency domain by imposing a power and duration
     % threshold on a power spectrogram.
 
     % USAGE
@@ -14,7 +14,7 @@ function [stime, sburst, binSpec] = detect_burst_spectrogram(Spec_f, Spec_t, Spe
     % 2. Spec_t       [1 x N vector]          : time vector of the spectrogram
     % 3. Spec         [N x N matrix]          : power spectrogram
     % 4. dt           [rational Q > 0]        : time step used for spectrogram computation
-    % 5. thrA_factor  [number N]              : amplitude threshold factor (i.e., multiplier of standard deviation)
+    % 5. thrA_factor  [number N]              : power threshold factor (i.e., multiplier of standard deviation)
     % 6. verbose      [logical]               : indicator for plotting a quantized spectrogram
     %                                           1) false or 0 (default)
     %                                              Recommended for the spectrograms with a non-equidistant frequency vector
@@ -36,7 +36,7 @@ function [stime, sburst, binSpec] = detect_burst_spectrogram(Spec_f, Spec_t, Spe
     if nargin < 6
         verbose = false;
     end
-    %% Apply Amplitude Threshold
+    %% Apply Power Threshold
     binSpec = zeros(size(Spec)); % preallocate binary spectrogram matrix
     % [1] Quantize Spectrogram in Each Frequency Band
     for j = 1:size(Spec,2) % for each frequency in a column

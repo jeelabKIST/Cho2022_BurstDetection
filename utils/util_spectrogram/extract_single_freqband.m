@@ -1,4 +1,4 @@
-function [btime,burst] = extract_single_freqband(btime,burst,idx)
+function [btime, burst] = extract_single_freqband(btime, burst, idx)
     %% Function: 'extract_single_freqband'
     % DESCRIPTION
     % This function extracts the time periods and spectral powers of the bursts

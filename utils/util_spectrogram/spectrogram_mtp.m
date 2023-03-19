@@ -60,7 +60,7 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_mtp(time, X, Fs, 
     % [5] MATLAB Documentation. https://www.mathworks.com/help/signal/ref/dpss.html
 
     % Written by SungJun Cho, March 25, 2021
-    % Last modified on October 29, 2021
+    % Last modified on February 07, 2023
     %% Input Parameter Configuration
     if nargin < 13
         verbose = true;
@@ -368,6 +368,7 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_mtp(time, X, Fs, 
                     axis xy;
                     xlabel('Time (s)');
                     ylabel('Frequency (Hz)');
+                    title('Multitaper Spectrogram (Frequency Interpolated)');
                     c = colorbar; colormap('jet');
                     ylabel(c, 'Power (mV^2)','FontSize',12);
                 end
@@ -399,7 +400,9 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_mtp(time, X, Fs, 
 end
 
 %% Appendix: In-Script Functions
-function display_summary(df,dt,window_size,Fs,nw,ntp)
+% Function #1: Displays a summary of MTP sepctrogram parameters and
+% resoultions
+function display_summary(df, dt, window_size, Fs, nw, ntp)
     disp('*****************SUMMARY*****************');
     disp('Multitaper Spectrogram Parameters:');
     disp(['    Spectral Resolution (Hz): ' num2str(2*nw./(window_size./Fs))]);

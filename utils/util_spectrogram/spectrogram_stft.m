@@ -149,6 +149,8 @@ function [Spec_f, Spec_t, Spec] = spectrogram_stft(time, X, Fs, lf, hf, dt, wind
 end
 
 %% Appendix: In-Script Functions
+% Function #1: Displays a summary of STFT sepctrogram parameters and
+% resoultions
 function display_summary(df, dt, window_size, Fs)
     disp('*****************SUMMARY*****************');
     disp('Short-Time Fourier Transform Spectrogram Parameters:');

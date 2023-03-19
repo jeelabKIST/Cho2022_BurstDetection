@@ -1,4 +1,4 @@
-function [bstat_class] = get_burst_statistics(btime_true,btrue_cycl,btime_test,dt,foi)
+function [bstat_class] = get_burst_statistics(btime_true, btrue_cycl, btime_test, dt, foi)
     %% Function 'get_burst_statistics'
     % DESCRIPTION
     % Extracts classification statistics from the burst simulations and
@@ -17,7 +17,7 @@ function [bstat_class] = get_burst_statistics(btime_true,btrue_cycl,btime_test,d
     % 1. bstat_class    [N x N cell]      : table consisting of burst IDs of simulated and detected bursts and classification labels of each detection
     
     % Written by SungJun Cho, August 15, 2021
-    % Last Modified on October 29, 2021
+    % Last Modified on February 25, 2023
     %% Preallocate Output of Arbitrarily Large Size
     truth_class = cell(1,length(btime_true)*length(btime_test));
     %% True Positives
@@ -77,7 +77,8 @@ function [bstat_class] = get_burst_statistics(btime_true,btrue_cycl,btime_test,d
     end
     % Confirm preallocation was large enough
     if k > size(truth_class,2)
-        warning('The size of current output exceeded the size preallocated at the outset.');
+        warning(['The size of current output exceeded the size preallocated at the outset. ' ...
+            'This can happen when no bursts were detected by the algorithm.']);
     end
     % Reorganize array containing statistics of true positives
     truth_class = [truth_class{:}];
@@ -121,6 +122,7 @@ function [bstat_class] = get_burst_statistics(btime_true,btrue_cycl,btime_test,d
 end
 
 %% Appendix: In-Script Functions
+% Function #1: Computes temporal concurrence of a single burst
 function [ta] = compute_temporal_accuracy(s_start,s_stop,d_start,d_stop)
     numerator = min(s_stop,d_stop) - max(s_start,d_start);
     denominator = max(s_stop,d_stop) - min(s_start,d_start);

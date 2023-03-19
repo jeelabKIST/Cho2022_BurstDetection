@@ -37,7 +37,7 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_stp(time, X, Fs, 
     % 4. fft_interval   [N x 2 matrix]             : matrix of frequency ranges centered around each element of Spec_f
 
     % Written by SungJun Cho, March 24, 2021
-    % Last modified on October 29, 2021
+    % Last modified on February 07, 2023
     %% Input Parameters
     % [1] Set Default Values
     if nargin < 8
@@ -186,6 +186,7 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_stp(time, X, Fs, 
             set(gca,'YTick',round(Spec_f,2));
             xlabel('Time (s)');
             ylabel('Frequency (Hz)');
+            title('S-STFT Spectrogram (f-Dependent Window)')
             c = colorbar; colormap('jet');
             ylabel(c, 'Power (mV^2)','FontSize',12);
         else
@@ -205,6 +206,7 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_stp(time, X, Fs, 
             axis xy;
             xlabel('Time (s)');
             ylabel('Frequency (Hz)');
+            title('S-STFT Spectrogram (Frequency Interpolated)');
             c = colorbar; colormap('jet');
             ylabel(c, 'Power (mV^2)','FontSize',12);
         end
@@ -216,6 +218,8 @@ function [Spec_f, Spec_t, SpecMat, fft_interval] = spectrogram_stp(time, X, Fs, 
 end
 
 %% Appendix: In-Script Functions
+% Function #1: Displays a summary of S-STFT sepctrogram parameters and
+% resoultions
 function display_summary(dfs, dt, window_sizes, Fs)
     disp('*****************SUMMARY*****************');
     disp('Single-Tapered STFT Spectrogram Parameters:');

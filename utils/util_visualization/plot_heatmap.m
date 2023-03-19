@@ -1,4 +1,4 @@
-function plot_heatmap(xvar,yvar,data,custom_cmap,vmin,vmax,title_name,axis_params)
+function plot_heatmap(xvar, yvar, data, custom_cmap, vmin, vmax, title_name, axis_params)
     %% Function 'plot_heatmap'
     % DESCRIPTION
     % This function plots a heatmap of a specific metric type for each algorithm.
@@ -15,7 +15,7 @@ function plot_heatmap(xvar,yvar,data,custom_cmap,vmin,vmax,title_name,axis_param
     % 8. axis_params   [struct]           : axis parameters for visualization
     
     % Written by SungJun Cho, October 11, 2021
-    % Last modified on October 29, 2021
+    % Last modified on January 29, 2023
     %% Set Axis Parameters
     fnt_sz = axis_params.fnt_sz;
     txt_sz = axis_params.txt_sz;
@@ -58,6 +58,7 @@ function plot_heatmap(xvar,yvar,data,custom_cmap,vmin,vmax,title_name,axis_param
     pause(0.8);
     xlabel('Duration (ms)'); title(title_name);
     ax = gca;
+    ax.XTickLabelRotation = 0;
     ax.XRuler.Axle.LineStyle = 'none';
     ax.YRuler.Axle.LineStyle = 'none';
     set(ax,'TickDir','out','Box','off','FontSize',fnt_sz,'FontWeight','bold','LineWidth',4,'Color','none',ax_pos.pos_type,ax_pos.pos_coord);
@@ -79,7 +80,6 @@ function plot_heatmap(xvar,yvar,data,custom_cmap,vmin,vmax,title_name,axis_param
         uistack(ax, 'top');
     end
 end
-
 % Helpful References:
 % https://stackoverflow.com/questions/25838789/remove-only-axis-lines-without-affecting-ticks-and-tick-labels
 % https://www.mathworks.com/matlabcentral/answers/352117-how-can-i-access-the-axle-property-in-an-axis-ruler

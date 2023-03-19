@@ -1,4 +1,4 @@
-function [freq,time,powermat,coi] = spectrogram_cwt(time, X, Fs, wname, scale_opt, verbose)
+function [freq, time, powermat, coi] = spectrogram_cwt(time, X, Fs, wname, scale_opt, verbose)
     %% Function 'spectrogram_cwt'
     % DESCRIPTION
     % This function computes and plots a continuous wavelet spectrogram (i.e. a
@@ -139,7 +139,9 @@ function [freq,time,powermat,coi] = spectrogram_cwt(time, X, Fs, wname, scale_op
 end
 
 %% Appendix: In-Script Functions
-function display_summary(wname,verbose,freq,fb)
+% Function #1: Displays a summary of CWT sepctrogram parameters and
+% resoultions
+function display_summary(wname, verbose, freq, fb)
     if nargin < 4
         fb = [];
     end
