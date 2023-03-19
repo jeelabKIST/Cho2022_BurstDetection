@@ -39,12 +39,12 @@ The repository is divided into three main categories:
 
 ### Tutorials
 
+* We **_highly recommend_** reading the tutorials if the readers want to use the burst detection algorithms introduced in our paper or apply our algorithm selection rule to their own dataset.
+
    | File            | Description                                                                              |
    | :-------------- | :--------------------------------------------------------------------------------------- |
    | `tutorial1.mlx` | Contains guidelines for synthetic simulation, burst detection, and performance evaluation|
    | `tutorial2.mlx` | Contains guidelines for applying the algorithm selection rule                            |
-
-We **_highly recommend_** reading the tutorials if the readers want to use the burst detection algorithms introduced in our paper or apply our algorithm selection rule to their own dataset.
 
 ### Main Scripts
 * Every `.m` script in these directories starts by configuring library paths to `utils` and `data`.
