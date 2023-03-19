@@ -11,15 +11,16 @@ nMethod = length(algorithms);
 fprintf(['\n* Selected Metric: ' upper(metric) '\n']);
 %% Load Data
 % [1] Get Area Under Curve (AUC)
-auc = load('AUC_stage2.mat').AUC.(metric);
+band_name = 'gamma';
+auc = load(['AUC_stage2_' band_name '.mat']).AUC.(metric);
 % [2] Select Trials with Human Annotations
 nTotTrial = size(auc,1);
 sel_trials = sort(cat(2,1:8:nTotTrial,5:8:nTotTrial)); % 1st trials of Day 1 & Day 2 for 8 mice
 auc = auc(sel_trials,:);
 % [3] Compute Inverse AUC and Its Statistics
 inverse_auc = 1./auc;
-auc_mean = mean(inverse_auc,1);
-auc_std = std(inverse_auc,1);
+auc_mean = mean(inverse_auc,1,'omitnan');
+auc_std = std(inverse_auc,1,'omitnan');
 nTrial = size(inverse_auc,1);
 %% Visualize Burst Detection Confidence AUC
 % [1] Set Visualization Parameters
@@ -38,7 +39,7 @@ if mod(vmax,0.2) ~= 0
     vmax = vmax + 0.1;
 end
 alpha = 0.4;
-% [2] Plot Bar Graphs: AUC across Trials
+% [2] Plot Bar Graphs: Inverse AUC across Trials
 figure(); hold on;
 x_axis = 1:nMethod;
 b = bar(x_axis, auc_mean);
@@ -73,10 +74,10 @@ set(b,'EdgeColor','none','BaseValue',vmin+0.004,'ShowBaseLine','off','FaceAlpha'
 set([er{:}],'CapSize',25,'LineStyle','none','LineWidth',10);
 % set(er.Bar, 'ColorType', 'truecoloralpha', 'ColorData', [er.Line.ColorData(1:3); 255*alpha]);
 % set(er.Cap, 'EdgeColorType', 'truecoloralpha', 'EdgeColorData', [er.Cap.EdgeColorData(1:3); 255*alpha]);
-set(gca,'FontSize',35,'LineWidth',5,'TickDir','out','TickLength',[0.015, 0.025],'Box','off','FontWeight','bold',...
+set(gca,'FontSize',35,'LineWidth',5,'TickDir','out','TickLength',[0.015, 0.025],'XTickLabelRotation',0,'Box','off','FontWeight','bold',...
     'Position',[0.221648616102467,0.146554506483428,0.73623345369296,0.778445493516572]);
 set(gcf,'Color','w','Position',[703,199,831,743]);
-%% Statistical Test
+%% Statistical Tests
 % [1] One-Way ANOVA
 group = algorithms;
 [p,tbl,stats] = anova1(inverse_auc,group,'off');
