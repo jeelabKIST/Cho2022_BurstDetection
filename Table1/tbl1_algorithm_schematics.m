@@ -1,5 +1,5 @@
 %% Configure Library Path
-util_path = genpath('/Users/jeelab/Desktop/Cho2022_BurstDetection/utils');
+util_path = genpath('/Users/scho/Neuroscience_KIST/Cho2022_BurstDetection/utils');
 addpath(util_path);
 %% Set Colors
 orange = '#fc6600';
@@ -22,7 +22,7 @@ rng_pks = [5 6];
 rnd_seed = 97;
 sim_verbose = false;
 % [2] Simulate a Signal
-[tvec,simulated_signal,Fs,data,btime_f1,burst_f1] = generate_simulation_rnd(method,T,f1,f2,nBurst1,nBurst2,noise_snr,rng_pks,rnd_seed,sim_verbose);
+[tvec,simulated_signal,Fs,data,btime_f1,burst_f1] = generate_simulation_simple(method,T,f1,f2,nBurst1,nBurst2,noise_snr,rng_pks,rnd_seed,sim_verbose);
 %% Plot Time Domain Analysis: Bandpass Filtering Method (BP)
 % [1] Filter Signal
 lf = f1-2; hf = f1+2; 
