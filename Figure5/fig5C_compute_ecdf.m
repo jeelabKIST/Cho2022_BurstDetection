@@ -32,20 +32,23 @@ signals = squeeze(data(anatomy_idx,:,:));
 hp = helper;
 %% Set Hyperparameters For Each Algorithm
 % [1] Time Domain
-if strcmp(band_name, 'gamma')
-    lo_f = 35; % lower frequency bound
-    hi_f = 45; % upper frequency bound
+if strcmp(band_name, 'theta')
+    lo_f = 8;  % lower frequency bound
+    hi_f = 10; % upper frequency bound
 elseif strcmp(band_name, 'beta')
     lo_f = 20;
     hi_f = 30;
+elseif strcmp(band_name, 'gamma')
+    lo_f = 35; 
+    hi_f = 45; 
 end
 mid_f =  (lo_f + hi_f) / 2;
 % [2] Time-Frequency Domain
-freq_range = unique([15:5:30 30:10:70 70:15:100]); % frequencies of interest
-dt = 0.01;                                         % time step for sliding windows
-nOscCycle_stp = 6; nOscCycle_mtp = 6;              % frequency-dependent window size
-nw = 2; ntp = 3;                                   % DPSS slepian sequences
-wname = 'amor'; scale_opt = 'default';             % type of and scaling option for the wavelet
+freq_range = unique([5:2:15 15:5:30 30:10:70 70:15:100]); % frequencies of interest
+dt = 0.01;                                                % time step for sliding windows
+nOscCycle_stp = 6; nOscCycle_mtp = 6;                     % frequency-dependent window size
+nw = 2; ntp = 3;                                          % DPSS slepian sequences
+wname = 'amor'; scale_opt = 'default';                    % type of and scaling option for the wavelet
 interp_opt = false;
 check_opt = true;
 plot_psd = false;
@@ -57,11 +60,23 @@ verbose = false;
 % [3] Amplitude Thresholds
 thrA_factor = 2.5;       % for bandpass filtering method
 prcthrA = 95;            % for envelope-based method
-specthrA_factor = 1.8;   % for spectral analysis methods
+specthrA_stp = 1.8;      % for S-STFT method
+specthrA_mtp = 1.8;      % for MTP method
+specthrA_cwt = 1.8;      % for CWT methods
 % [4] Window Time Steps
 dt_stp = dt;
 dt_mtp = dt;
 dt_cwt = 1/Fs;
+% [5] Alter Hyperparameters for Theta Band % EDIT
+if strcmp(band_name, 'theta')
+    ntp = 2;                 % number of DPSS tapers
+    thrA_factor = 1.8;       % for bandpass filtering method
+    prcthrA = 90;            % for envelope-based method
+    specthrA_stp = 1.2;      % for S-STFT method
+    specthrA_mtp = 1.3;      % for MTP method % EDIT
+    specthrA_cwt = 1.0;      % for CWT method
+    dt_mtp = dt_mtp / 2;     % time step for sliding windows
+end
 %% Empirical Cumulative Distribution Functions (eCDF) and Area Under Curve (AUC)
 tic; fprintf('Computing eCDF and AUC ... \n');
 AUC = struct();
@@ -82,17 +97,17 @@ for n = 1:nTrial
     [btime_ev,burst_ev,~] = detect_burst_ampenv(Fs,tvec,filt_sig,lo_f,hi_f,prcthrA);
     % (D) Single-Tapered Short Time Fourier Transform
     [Spec_f_stp,Spec_t_stp,Spec_stp,~] = spectrogram_stp(tvec,signal,Fs,freq_range,dt_stp,nOscCycle_stp,verbose,interp_opt);
-    [btime_stp,burst_stp,~] = detect_burst_spectrogram(Spec_f_stp,Spec_t_stp,Spec_stp,dt_stp,specthrA_factor,verbose);
+    [btime_stp,burst_stp,~] = detect_burst_spectrogram(Spec_f_stp,Spec_t_stp,Spec_stp,dt_stp,specthrA_stp,verbose);
     minIdx_stp = find(abs(Spec_f_stp-mid_f) == min(abs(Spec_f_stp-mid_f)));
     [btime_stp,burst_stp] = extract_single_freqband(btime_stp,burst_stp,minIdx_stp);
     % (E) Multitaper Spectrogram
     [Spec_f_mtp,Spec_t_mtp,Spec_mtp,~] = spectrogram_mtp(tvec,signal,Fs,nw,ntp,freq_range,dt_mtp,nOscCycle_mtp,interp_opt,plot_psd,check_opt,plot_tp,verbose);
-    [btime_mtp,burst_mtp,~] = detect_burst_spectrogram(Spec_f_mtp,Spec_t_mtp,Spec_mtp,dt_mtp,specthrA_factor,verbose);
+    [btime_mtp,burst_mtp,~] = detect_burst_spectrogram(Spec_f_mtp,Spec_t_mtp,Spec_mtp,dt_mtp,specthrA_mtp,verbose);
     minIdx_mtp = find(abs(Spec_f_mtp-mid_f) == min(abs(Spec_f_mtp-mid_f)));
     [btime_mtp,burst_mtp] = extract_single_freqband(btime_mtp,burst_mtp,minIdx_mtp);
     % (F) Continuous Wavelet Spectrogram
     [wav_freq,wav_time,Spec_cwt,~] = spectrogram_cwt(tvec,signal,Fs,wname,scale_opt,verbose);
-    [btime_cwt,burst_cwt,~] = detect_burst_spectrogram(wav_freq,wav_time,Spec_cwt',dt_cwt,specthrA_factor,verbose);
+    [btime_cwt,burst_cwt,~] = detect_burst_spectrogram(wav_freq,wav_time,Spec_cwt',dt_cwt,specthrA_cwt,verbose);
     minIdx_cwt = find(abs(wav_freq-mid_f) == min(abs(wav_freq-mid_f)));
     [btime_cwt,burst_cwt] = extract_single_freqband(btime_cwt,burst_cwt,minIdx_cwt);
     % [2] Parse Bursts (Experiment Stage 2)
