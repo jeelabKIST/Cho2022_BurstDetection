@@ -5,8 +5,10 @@ addpath(util_path);
 addpath(data_path);
 %% Load Data
 % [1] Get Theoretical Results
-band_name = 'gamma';
-% NOTE: For Table 2, set `band_name` as 'gamma'. For Table 2-1, use 'beta'.
+band_name = 'theta';
+% NOTE: For Table 2, set `band_name` as 'theta'.
+%       For Table 2-1, set `band_name` as 'beta'.
+%       For Table 2-2, set `band_name` as 'gamma'.
 HEATMAP = load(['HM_' band_name '.mat']).HEATMAP;
 DC = load(['DC_' band_name '.mat']);
 scoreMat = {
@@ -35,20 +37,23 @@ completed_trials = cellfun(@(name) str2double(name), regexp(fieldnames(HUMAN_ANN
 nComplete = length(completed_trials);
 %% Set Hyperparameters For Each Algorithm
 % [1] Time Domain
-if strcmp(band_name, 'gamma')
-    lo_f = 35; % lower frequency bound
-    hi_f = 45; % upper frequency bound
+if strcmp(band_name, 'theta')
+    lo_f = 8;  % lower frequency bound
+    hi_f = 10; % upper frequency bound
 elseif strcmp(band_name, 'beta')
     lo_f = 20;
     hi_f = 30;
+elseif strcmp(band_name, 'gamma')
+    lo_f = 35; 
+    hi_f = 45; 
 end
 mid_f =  (lo_f + hi_f) / 2;
 % [2] Time-Frequency Domain
-freq_range = unique([15:5:30 30:10:60]); % frequencies of interest
-dt = 0.01;                               % time step for sliding windows
-nOscCycle_stp = 6; nOscCycle_mtp = 6;    % frequency-dependent window size
-nw = 2; ntp = 3;                         % DPSS slepian sequences
-wname = 'amor'; scale_opt = 'default';   % type of and scaling option for the wavelet
+freq_range = unique([5:2:15 15:5:30 30:10:70 70:15:100]); % frequencies of interest
+dt = 0.01;                                                % time step for sliding windows
+nOscCycle_stp = 6; nOscCycle_mtp = 6;                     % frequency-dependent window size
+nw = 2; ntp = 3;                                          % DPSS slepian sequences
+wname = 'amor'; scale_opt = 'default';                    % type of and scaling option for the wavelet
 interp_opt = false;
 check_opt = true;
 plot_psd = false;
@@ -60,12 +65,24 @@ verbose = false;
 % [3] Amplitude Thresholds
 thrA_factor = 2.5;       % for bandpass filtering method
 prcthrA = 95;            % for envelope-based method
-specthrA_factor = 1.8;   % for spectral analysis methods
+specthrA_stp = 1.8;      % for S-STFT method
+specthrA_mtp = 1.8;      % for MTP method
+specthrA_cwt = 1.8;      % for CWT methods
 % [4] Window Time Steps
 dt_stp = dt;
 dt_mtp = dt;
 dt_cwt = 1/Fs;
-%% Compute Experiment Performance By Each Mouse
+% [5] Alter Hyperparameters for Theta Band % EDIT
+if strcmp(band_name, 'theta')
+    ntp = 2;                 % number of DPSS tapers
+    thrA_factor = 1.8;       % for bandpass filtering method
+    prcthrA = 90;            % for envelope-based method
+    specthrA_stp = 1.2;      % for S-STFT method
+    specthrA_mtp = 1.3;      % for MTP method % EDIT
+    specthrA_cwt = 1.0;      % for CWT method
+    dt_mtp = dt_mtp / 2;     % time step for sliding windows
+end
+%% Compute Experiment Performance By Each Mo  use
 % [1] Create Empty Tables To Store Results
 [statistics_bp,statistics_ev,statistics_stp,statistics_mtp,statistics_cwt] = deal(cell(1,nTrial));
 % [2] Measure Performance Metrics
@@ -95,17 +112,17 @@ for n = completed_trials
     [btime_ev,burst_ev,~] = detect_burst_ampenv(Fs,tvec,filt_sig,lo_f,hi_f,prcthrA);
     % [3] Single-Tapered Short Time Fourier Transform
     [Spec_f_stp,Spec_t_stp,Spec_stp,~] = spectrogram_stp(tvec,signal,Fs,freq_range,dt_stp,nOscCycle_stp,verbose,interp_opt);
-    [btime_stp,burst_stp,~] = detect_burst_spectrogram(Spec_f_stp,Spec_t_stp,Spec_stp,dt_stp,specthrA_factor,verbose);
+    [btime_stp,burst_stp,~] = detect_burst_spectrogram(Spec_f_stp,Spec_t_stp,Spec_stp,dt_stp,specthrA_stp,verbose);
     minIdx_stp = find(abs(Spec_f_stp-mid_f) == min(abs(Spec_f_stp-mid_f)));
     [btime_stp,burst_stp] = extract_single_freqband(btime_stp,burst_stp,minIdx_stp);
     % [4] Multitaper Spectrogram
     [Spec_f_mtp,Spec_t_mtp,Spec_mtp,~] = spectrogram_mtp(tvec,signal,Fs,nw,ntp,freq_range,dt_mtp,nOscCycle_mtp,interp_opt,plot_psd,check_opt,plot_tp,verbose);
-    [btime_mtp,burst_mtp,~] = detect_burst_spectrogram(Spec_f_mtp,Spec_t_mtp,Spec_mtp,dt_mtp,specthrA_factor,verbose);
+    [btime_mtp,burst_mtp,~] = detect_burst_spectrogram(Spec_f_mtp,Spec_t_mtp,Spec_mtp,dt_mtp,specthrA_mtp,verbose);
     minIdx_mtp = find(abs(Spec_f_mtp-mid_f) == min(abs(Spec_f_mtp-mid_f)));
     [btime_mtp,burst_mtp] = extract_single_freqband(btime_mtp,burst_mtp,minIdx_mtp);
     % [5] Continuous Wavelet Spectrogram
     [wav_freq,wav_time,Spec_cwt,~] = spectrogram_cwt(tvec,signal,Fs,wname,scale_opt,verbose);
-    [btime_cwt,burst_cwt,~] = detect_burst_spectrogram(wav_freq,wav_time,Spec_cwt',dt_cwt,specthrA_factor,verbose);
+    [btime_cwt,burst_cwt,~] = detect_burst_spectrogram(wav_freq,wav_time,Spec_cwt',dt_cwt,specthrA_cwt,verbose);
     minIdx_cwt = find(abs(wav_freq-mid_f) == min(abs(wav_freq-mid_f)));
     [btime_cwt,burst_cwt] = extract_single_freqband(btime_cwt,burst_cwt,minIdx_cwt);
     %% Parse Bursts (Stage 2)
@@ -234,7 +251,7 @@ function plot_bar_graph(data_table,color_palette,metric_name,size_opt)
     if nargin < 4
         size_opt = 'large';
     end
-    % Organize Data
+    % [1] Organize Data
     nData = size(data_table,1);
     nMethod = size(data_table,2);
     data_avg = mean(data_table,1,'omitnan');
@@ -244,7 +261,7 @@ function plot_bar_graph(data_table,color_palette,metric_name,size_opt)
     if mod(vmax,0.2) ~= 0
         vmax = vmax + 0.1;
     end
-    % Visualize Bar Graphs
+    % [2] Visualize Bar Graphs
     figure(); hold on;
     x_axis = 1:nMethod;
     b = bar(x_axis, data_avg);
@@ -278,7 +295,7 @@ function plot_bar_graph(data_table,color_palette,metric_name,size_opt)
     end
     xlabel('Algorithms');
     ylabel(metric_name);
-    % Figure Settings
+    % (A) Figure Settings
     set(b,'EdgeColor','none','BaseValue',0.004,'ShowBaseLine','off','FaceAlpha',0.4);
     set([er{:}],'CapSize',25,'LineStyle','none','LineWidth',10);
     if strcmp(size_opt,'small')
