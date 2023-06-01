@@ -208,7 +208,7 @@ P = {P_bp,P_ev,P_stp,P_mtp,P_cwt};
 R = {R_bp,R_ev,R_stp,R_mtp,R_cwt};
 F = {F_bp,F_ev,F_stp,F_mtp,F_cwt};
 TC = {T_bp,T_ev,T_stp,T_mtp,T_cwt};
-band_names = {'alpha','beta','gamma'};
+band_names = {'theta','beta','gamma'};
 for bandIdx = 1:nBand
     save_heatmap(P,R,F,TC,setSeed,band_names{bandIdx},bandIdx,filename_result);
 end
