@@ -25,7 +25,7 @@ sim_verbose = false;
 [tvec,simulated_signal,Fs,data,btime,burst,bfreq,cyc] = generate_simulation(method,T,f,f_spans,nBurst,noise_snr,rng_pks,rnd_seed,sim_verbose);
 %% Plot Simulated Signal Schematics
 fnt_sz = 54;
-draw_schematics(tvec,data(:,2),{'ɑ Bursts';'(8-10Hz)'},fnt_sz,bluel);
+draw_schematics(tvec,data(:,2),{'θ Bursts';'(8-10Hz)'},fnt_sz,bluel);
 draw_schematics(tvec,data(:,3),{'β Bursts';'(23-27Hz)'},fnt_sz,blued);
 draw_schematics(tvec,data(:,4),{'γ Bursts';'(37-45Hz)'},fnt_sz,blued);
 draw_schematics(tvec,data(:,5),{'Aperiodic';'Noise'},fnt_sz,orange);
