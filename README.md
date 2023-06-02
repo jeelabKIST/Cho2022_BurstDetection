@@ -30,7 +30,7 @@ The repository is divided into three main categories:
 
    | File           | Description                                                     |
    | :------------- | :-------------------------------------------------------------- |
-   | `HM_*.mat`     | Stores the hetamps of different metrics and algorithms          |
+   | `HM_*.mat`     | Stores the hetamps of different metrics for each algorithm      |
    | `randseed.mat` | Stores random seeds that were used to simulate synthetic signals|
    | `DC_*.mat`     | Stores the heatmaps of detection confidence scores              |   
 
@@ -57,6 +57,7 @@ The repository is divided into three main categories:
         addpath(data_path)
         ```
 * For `.ipynb` and `.py` scripts, you can similarly change the path by setting `input_path`, `file_path`, or `save_path` to your desired location.
+* For `.r` scripts, you can configure the path by setting `data_dir` to your desired location.
 
 ### Others
 * `compute_heatmap.m`
@@ -72,6 +73,7 @@ The analyses and visualizations in this paper had following dependencies:
 
 ```
 MATLAB 2020a (or later)
+R version 4.2.2
 python==3.7.4
 seaborn==0.11.1
 scipy==1.4.1
