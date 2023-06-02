@@ -20,11 +20,11 @@ function [bscoreMat, auc] = compute_ecdf_auc(trialID, metric_name, scoreMat, bti
     
     % OUTPUT
     %    Variable       Data Type           Description
-    % 1. bscoremat     [1 x N cell]       : performance metric values mapped from burst detections of each algorithm
+    % 1. bscoreMat     [1 x N cell]       : performance metric values mapped from burst detections of each algorithm
     % 2. auc           [1 x N double]     : AUC values for each algorithm
     
     % Written by SungJun Cho, August 15, 2021
-    % Last Modified on March 18, 2023
+    % Last Modified on April 30, 2023
     %% Set Input Parameters
     if nargin < 11
         verbose = true;
@@ -43,25 +43,31 @@ function [bscoreMat, auc] = compute_ecdf_auc(trialID, metric_name, scoreMat, bti
     foi = (lo_f + hi_f) / 2;
     wrapper = @(x,y) sec2cyc(x,foi,y);
     blenMat = cellfun(wrapper, btimeMat, dtMat, 'UniformOutput', false); % length (in cycles) of all bursts
-    % Since bursts longer than 12 cycles can be detected, we bound maximum
-    % length of bursts to 12 cycles in order to compare them with decision
-    % matrices.
+    % Since bursts longer than 12 cycles or shorter than 3 cycles can be 
+    % detected, we bound maximum length of bursts to 12 cycles and its 
+    % minimum to 3 cycles in order to compare them with decision matrices.
     for n = 1:nMethod
         for i = 1:length(blenMat{n})
             if blenMat{n}(i) > 12
                 blenMat{n}(i) = 12;
             end
+            if blenMat{n}(i) < 3
+                blenMat{n}(i) = 3;
+            end
         end
     end
     %% Compute Burst Signal-to-Noise Ratio
     snrMat = get_snr(btimeMat,tvec,signal,Fs,lo_f,hi_f);
-    % Since bursts with SNR higher than 10 dB can be detected, we bound maximum
-    % SNR of bursts to 10 dB in order to compare them with decision
-    % matrices.
+    % Since bursts with SNR higher than 10 dB or lower than -10 dB can be 
+    % detected, we bound maximum SNR of bursts to 10 dB and minimum to -10 
+    % dB in order to compare them with decision matrices.
     for n = 1:nMethod
         for i = 1:length(snrMat{n})
             if snrMat{n}(i) > 10
                 snrMat{n}(i) = 10;
+            end
+            if snrMat{n}(i) < -10
+                snrMat{n}(i) = -10;
             end
         end
     end
@@ -136,7 +142,7 @@ function [bscoreMat, auc] = compute_ecdf_auc(trialID, metric_name, scoreMat, bti
         grid off;
         set(leg,'FontSize',24,'FontWeight','bold');
         set(gca,'FontSize',35,'FontWeight','bold','LineWidth',5,'YLim',[-0.01,1.01],'TickDir','Out','TickLength',[0.015, 0.025], ...
-            'XMinorTick','on','YMinorTick','on','Position',[0.191107069608701,0.151302987340527,0.718640222810071,0.712761615620442]);
+            'XMinorTick','off','YMinorTick','off','Position',[0.191107069608701,0.151302987340527,0.718640222810071,0.712761615620442]);
         set(gcf,'Color','w','Position',[703,199,831,743]);
     else
         warning('Cannot plot ECDF. At least one algorithm did not detect any bursts.');
