@@ -94,11 +94,15 @@ To cite this paper, you can use the following information:
 * Bibtex
 
    ```
-   @article{cho2023guide,
-     title={A guide towards optimal detection of transient oscillatory bursts with unknown parameters},
-     author={Cho, Sungjun and Choi, Jee Hyun},
-     journal={Journal of Neural Engineering},
-     year={2023}
+   @article{Cho_2023,
+   	doi = {10.1088/1741-2552/acdffd},
+   	url = {https://doi.org/10.1088%2F1741-2552%2Facdffd},
+   	year = 2023,
+   	month = {jun},
+   	publisher = {{IOP} Publishing},
+   	author = {Sungjun Cho and Jee Hyun Choi},
+   	title = {A guide towards optimal detection of transient oscillatory bursts with unknown parameters},
+   	journal = {Journal of Neural Engineering}
    }
    ```
 
