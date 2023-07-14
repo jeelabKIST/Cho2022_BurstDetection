@@ -1,5 +1,7 @@
 # Cho2022_BurstDetection
 
+🔗 A guide towards optimal detection of transient oscillatory bursts with unknown parameters (DOI: [10.1088/1741-2552/acdffd](https://doi.org/10.1088/1741-2552/acdffd))
+
 💡 Please email Jee Hyun Choi at jeechoi@kist.re.kr or SungJun Cho at scho.sungjun@gmail.com with any questions or concerns.
 
 ---
@@ -80,6 +82,25 @@ scipy==1.4.1
 numpy==1.17.2
 pandas==0.25.1
 ```
+
+## ✏️ Citation
+
+To cite this paper, you can use the following information:
+
+* Harvard style
+  
+   > Cho, S. and Choi, J.H., 2023. A guide towards optimal detection of transient oscillatory bursts with unknown parameters. Journal of Neural Engineering.
+
+* Bibtex
+
+   ```
+   @article{cho2023guide,
+     title={A guide towards optimal detection of transient oscillatory bursts with unknown parameters},
+     author={Cho, Sungjun and Choi, Jee Hyun},
+     journal={Journal of Neural Engineering},
+     year={2023}
+   }
+   ```
 
 ## 🪪 License
 Copyright (c) 2022-Present [SungJun Cho](https://github.com/scho97) and [Jee Lab](https://www.jeelab.net/). `Cho2022_BurstDetection` is a free and open-source software licensed under the [MIT License](https://github.com/jeelabKIST/Cho2022_BurstDetection/blob/main/LICENSE).
