@@ -87,9 +87,9 @@ pandas==0.25.1
 
 To cite this paper, you can use the following information:
 
-* Harvard style
+* APA style
   
-   > Cho, S. and Choi, J.H., 2023. A guide towards optimal detection of transient oscillatory bursts with unknown parameters. Journal of Neural Engineering.
+   > Cho, S., & Choi, J. H. (2023). A guide towards optimal detection of transient oscillatory bursts with unknown parameters. Journal of Neural Engineering, 20(4), 046007. https://doi.org/10.1088/1741-2552/acdffd
 
 * Bibtex
 
@@ -98,9 +98,12 @@ To cite this paper, you can use the following information:
    	doi = {10.1088/1741-2552/acdffd},
    	url = {https://doi.org/10.1088%2F1741-2552%2Facdffd},
    	year = 2023,
-   	month = {jun},
+   	month = {jul},
    	publisher = {{IOP} Publishing},
-   	author = {Sungjun Cho and Jee Hyun Choi},
+   	volume = {20},
+   	number = {4},
+   	pages = {046007},
+   	author = {SungJun Cho and Jee Hyun Choi},
    	title = {A guide towards optimal detection of transient oscillatory bursts with unknown parameters},
    	journal = {Journal of Neural Engineering}
    }
