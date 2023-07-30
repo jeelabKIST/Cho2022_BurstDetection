@@ -64,7 +64,7 @@ The repository is divided into three main categories:
 ### Others
 * `compute_heatmap.m`
 
-  This script is an important file that should be run prior to executing all the main scripts (except for those in `Figure1` and `Table1`). It outputs simulation results, which are stored as a `struct` format that contains heatmaps for different metrics and algorithms. The heatmaps used in this study are already provided in the `simulation_data` directory, so you do not have to run this script unless you have a specific range of frequency band in which you want to construct the heatmaps.
+  This script is an important file that should be run prior to executing all the main scripts (except for those in `Figure1` and `Figure2`). It outputs simulation results, which are stored as a `struct` format that contains heatmaps for different metrics and algorithms. The heatmaps used in this study are already provided in the `simulation_data` directory, so you do not have to run this script unless you have a specific range of frequency band in which you want to construct the heatmaps.
   
 * `save_detection_confidence.m`
 
