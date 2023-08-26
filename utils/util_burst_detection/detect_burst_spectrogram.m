@@ -17,8 +17,8 @@ function [stime, sburst, binSpec] = detect_burst_spectrogram(Spec_f, Spec_t, Spe
     % 5. thrA_factor  [number N]              : power threshold factor (i.e., multiplier of standard deviation)
     % 6. verbose      [logical]               : indicator for plotting a quantized spectrogram
     %                                           1) false or 0 (default)
-    %                                              Recommended for the spectrograms with a non-equidistant frequency vector
     %                                           2) true or 1
+    %                                              NOT recommended for the spectrograms with high temporal resolution (i.e., small dt)
 
     % NOTE: Only the bursts of frequencies lower than or equal to 1/dt Hz can be detected using this algorithm, because the spectrogram is sampled by the
     % period dt. Therefore, to detect the bursts in higher frequency bands, a spectrogram with windows moving in smaller steps should be used. However, this 
@@ -152,14 +152,47 @@ function [stime, sburst, binSpec] = detect_burst_spectrogram(Spec_f, Spec_t, Spe
         binSpec(temp_tIdx,k) = 1;
         binSpec(temp_tIdx_not,k) = 0;
     end
+    %% Visualize Quantized Spectrogram
     if verbose
-        figure();
-        imagesc(Spec_t,Spec_f,imcomplement(binSpec'));
-        colormap(gray);
-        axis xy; box on;
-        set(gca,'TickLength',[0 0],'FontSize',12);
+        if numel(binSpec) > 1e6
+            warning("binSpec too large to visualize. Manually adjust the code to visualize nevertheless.")
+        else
+            % [1] Adjust Spectrogram Dimensions
+            if Spec_f(end) - Spec_f(1) < 0
+                binSpec = fliplr(binSpec);
+                Spec_f = flipud(Spec_f);
+            end
+            % [2] Plot Burst Events
+            plot_raster(Spec_t, binSpec, Spec_f)
+            title('Quantized Spectrogram');
+        end
+    end
+    %% Auxiliary Function
+    function plot_raster(time, data, trials)
+        % Adopted from Alwin Gieselmann & Felix Schneider, Newcastle University (Feb 2020)
+        % [1] Define Number of Trials
+        nTrial = size(data,2);
+        % [2] Visualize Raster Plot
+        figure(); hold on;
+        for n = 1:nTrial
+            events = logical(data(:,n));
+            t_events = time(events);
+            t_events = repmat(t_events,3,1);
+            y_events = nan(size(t_events));
+            if ~isempty(y_events)
+                y_events(1,:) = n-1;
+                y_events(2,:) = n;
+            end
+            plot(t_events,y_events,'Color','k');
+        end
+        % [3] Adjust Axis and Figure Settings
+        ticks = 1:nTrial;
+        yticks(ticks-0.5); % center the ticks
+        yticklabels(trials);
         xlabel('Time (s)');
         ylabel('Frequency (Hz)');
-        title('Quantized Spectrogram');
+        box on;
+        set(gca,'TickLength',[0 0],'FontSize',12);
+        set(gcf,'Color','w');
     end
 end
